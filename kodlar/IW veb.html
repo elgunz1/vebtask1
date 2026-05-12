@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sneaker Product Page</title>
+    <link rel="stylesheet" href="IW veb1.css">
+</head>
+<body>
+ 
+    <header class="navbar">
+        <div class="container">
+            <div class="nav-left">
+                <div class="logo">sneakers</div>
+                <nav class="nav-links">
+                    <a href="#">Collections</a>
+                    <a href="#">Men</a>
+                    <a href="#">Women</a>
+                    <a href="#">About</a>
+                    <a href="#">Contact</a>
+                </nav>
+            </div>
+            <div class="nav-right">
+                <div style="position:relative;display:inline-flex;">
+                   <img src="icon-cart.svg" alt="Cart" class="cart-icon">
+                </div>
+                <img src="image-avatar.png" alt="Avatar" class="avatar">
+            </div>
+        </div>
+    </header>
+    <div id="cart-modal">
+       <h3>Cart</h3>
+       <hr>
+       <div id="cart-items">
+        <p class="empty-msg">Your cart is empty.</p>
+       </div>
+    </div>
+ 
+    <main class="product-container">
+        <div class="product-gallery">
+            <img src="image-product-1.jpg" alt="Sneaker" class="main-image" onclick="openLightbox()">
+            <div class="thumbnails">
+                <img src="image-product-1-thumbnail.jpg" alt="thumb">
+                <img src="image-product-2-thumbnail.jpg" alt="thumb"> <img src="image-product-3-thumbnail.jpg" alt="thumb">
+                <img src="image-product-4-thumbnail.jpg" alt="thumb">
+            </div>
+        </div>
+ 
+        <div class="product-info">
+            <p class="brand">SNEAKER COMPANY</p>
+            <h1>Fall Limited Edition Sneakers</h1>
+            <p class="description">
+                These low-profile sneakers are your perfect casual wear companion. 
+                Featuring a durable rubber outer sole, they'll withstand everything the weather can offer.
+            </p>
+            
+            <div class="price-section">
+                <span class="current-price">$125.00</span>
+                <span class="discount">50%</span>
+                <p class="original-price">$250.00</p>
+            </div>
+ 
+            <div class="actions">
+                   <div class="quantity-selector">
+                     <img src="icon-minus.svg" class="qty-btn" onclick="updateCount(-1)" alt="Minus">
+                     <span>0</span>
+                     <img src="icon-plus.svg" class="qty-btn" onclick="updateCount(1)" alt="Plus">
+                    </div>
+                <button class="add-to-cart" onclick="addToCart()">Add to cart</button>
+            </div>
+        </div>
+    </main>
+ 
+    <div id="lightbox" class="modal">
+        <img src="icon-close.svg" class="close" onclick="closeLightbox()" alt="Close">
+        <div class="modal-content">
+            <div class="main-img-container">
+                <button class="prev" onclick="changeSlide(-1)">&#10094;</button>
+                <img id="lightbox-main" src="image-product-1.jpg">
+                <button class="next" onclick="changeSlide(1)">&#10095;</button>
+            </div>
+            <div class="modal-thumbnails">
+                <img src="image-product-1-thumbnail.jpg" onclick="setLightboxImage(1)">
+                <img src="image-product-2-thumbnail.jpg" onclick="setLightboxImage(2)">
+                <img src="image-product-3-thumbnail.jpg" onclick="setLightboxImage(3)">
+                <img src="image-product-4-thumbnail.jpg" onclick="setLightboxImage(4)">
+            </div>
+        </div>
+    </div>
+ 
+    <script>
+        let count = 0;
+        let cartQty = 0;
+        const countDisplay = document.querySelector('.quantity-selector span');
+ 
+        function updateCount(n) {
+            count += n;
+            if (count < 0) count = 0; 
+            countDisplay.textContent = count;
+        }
+ 
+        function addToCart() {
+            if (count === 0) return;
+            cartQty += count;
+            count = 0;
+            countDisplay.textContent = 0;
+ 
+            
+            let badge = document.getElementById('cart-badge');
+            if (!badge) {
+                badge = document.createElement('span');
+                badge.id = 'cart-badge';
+                badge.style.cssText = 'position:absolute;top:-8px;right:-8px;background:#ff7d1a;color:white;border-radius:50%;width:18px;height:18px;font-size:11px;font-weight:bold;display:flex;align-items:center;justify-content:center;';
+                cartIcon.parentElement.appendChild(badge);
+            }
+            badge.style.display = 'flex';
+            badge.textContent = cartQty;
+ 
+           
+            document.getElementById('cart-items').innerHTML =
+                '<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">' +
+                    '<img src="image-product-1-thumbnail.jpg" class="cart-thumb">' +
+                    '<div class="cart-info">' +
+                        '<p>Fall Limited Edition Sneakers</p>' +
+                        '<p>$125.00 x ' + cartQty + ' <strong>$' + (125 * cartQty) + '.00</strong></p>' +
+                    '</div>' +
+                    '<img src="icon-delete.svg" class="delete-btn" onclick="removeCart()" alt="Sil">' +
+                '</div>' +
+                '<button class="checkout-btn" style="width:100%;background:#ff7d1a;color:white;border:none;padding:16px;border-radius:10px;font-weight:bold;font-size:15px;cursor:pointer;">Checkout</button>';
+        }
+ 
+        function removeCart() {
+            cartQty = 0;
+            document.getElementById('cart-badge').style.display = 'none';
+            document.getElementById('cart-items').innerHTML = '<p class="empty-msg">Your cart is empty.</p>';
+        }
+ 
+        function openLightbox() { document.getElementById("lightbox").style.display = "flex";
+            document.querySelectorAll('.thumbnails img').forEach((img, i) => {
+            img.addEventListener('click', function() {
+            document.querySelector('.main-image').src = this.src.replace('-thumbnail', '');
+            document.querySelectorAll('.thumbnails img').forEach(t => t.classList.remove('active-thumb'));
+            this.classList.add('active-thumb');});});
+         }
+        function closeLightbox() { document.getElementById("lightbox").style.display = "none"; }
+        function setLightboxImage(n) {
+            document.getElementById("lightbox-main").src = "image-product-" + n + ".jpg";
+        }
+        function changeSlide(n) {
+            let current = parseInt(document.getElementById("lightbox-main").src.split('-')[2].split('.')[0]);
+            let next = current + n;
+            if (next > 4) next = 1;
+            if (next < 1) next = 4;
+            setLightboxImage(next);
+        }
+ 
+       
+        const navLinks = document.querySelectorAll('.nav-links a');
+        navLinks.forEach(link => {
+          link.addEventListener('click', function() {
+             navLinks.forEach(l => l.classList.remove('active'));
+             this.classList.add('active');
+          });
+        });
+ 
+        
+        const cartIcon = document.querySelector('.cart-icon');
+        const cartModal = document.getElementById('cart-modal');
+ 
+        cartIcon.addEventListener('click', () => {
+            if (cartModal.style.display === 'block') {
+                cartModal.style.display = 'none';
+            } else {
+                cartModal.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
